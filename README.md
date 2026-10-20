@@ -46,7 +46,7 @@ python tools/mqtt_smoke.py --embedded                        # MQTT 브로커 �
 | 3D (Isaac Sim 6.1 필요) | `demo\run_demo_3d.py` 뒤 `demo\compose_3d.py` | 원본 777 s → 라우터 695 s (11 %, AMR 이송이 병목) |
 | Isaac Sim 창으로 보기 | `demo\3D로_보기_1_원본공장장.bat` · `3D로_보기_2_라우터.bat` | — |
 
-원본은 고정 표 때문에 두 번째 셀을 전혀 쓰지 않는다. 라우터는 후보마다 비용(초)을 계산해 번갈아 배정한다. 영상과 해석: [Releases](../../releases), `demo/README_시연.md`.
+원본은 고정 표 때문에 두 번째 셀을 전혀 쓰지 않는다. 라우터는 후보마다 비용(초)을 계산해 번갈아 배정한다. 영상과 해석: [Releases](https://github.com/jeonjunhyub/fdw-router/releases), `demo/README_시연.md`.
 
 ## 구조
 

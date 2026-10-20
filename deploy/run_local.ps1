@@ -54,6 +54,16 @@ if (-not (Test-Path -LiteralPath (Join-Path $env:FDW_OPS_ROOT "fdw_sim")) -and -
 $venv = Join-Path $Repo ".venv"
 $py = Join-Path $venv "Scripts\python.exe"
 
+# 네이티브 명령을 조용히 실행하고 성공 여부만 돌려준다. ($ErrorActionPreference = "Stop" 아래에서는
+# 네이티브 명령이 stderr 에 한 줄만 써도 예외가 되어 Python 탐색이 중단되므로, 잠시 Continue 로 내린다.)
+function Invoke-Quiet {
+    param([string]$Exe, [string[]]$Args)
+    $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
+    try { & $Exe @Args 2>$null | Out-Null; return ($LASTEXITCODE -eq 0) }
+    catch { return $false }
+    finally { $ErrorActionPreference = $old }
+}
+
 function Test-VenvWorks {
     if (-not (Test-Path -LiteralPath $py)) { return $false }
     $cfg = Join-Path $venv "pyvenv.cfg"
@@ -61,8 +71,7 @@ function Test-VenvWorks {
         $home_ = (Get-Content -LiteralPath $cfg | Where-Object { $_ -match '^\s*home\s*=' }) -replace '^\s*home\s*=\s*', ''
         if ($home_ -and -not (Test-Path -LiteralPath $home_)) { return $false }   # 다른 PC 의 Python 을 가리킨다
     }
-    & $py -c "import sys" 2>$null
-    return ($LASTEXITCODE -eq 0)
+    return (Invoke-Quiet $py @("-c", "import sys"))
 }
 
 if ($Recreate -or ((Test-Path -LiteralPath $venv) -and -not (Test-VenvWorks))) {
@@ -83,16 +92,14 @@ if (-not (Test-Path -LiteralPath $venv)) {
         $pyLauncher = Get-Command py -ErrorAction SilentlyContinue
         if ($pyLauncher) {
             foreach ($v in @("-3.11", "-3.12", "-3.13", "-3.10", "-3")) {
-                & py $v -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>$null
-                if ($LASTEXITCODE -eq 0) { $basePy = @("py", $v); break }
+                if (Invoke-Quiet "py" @($v, "-c", "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)")) { $basePy = @("py", $v); break }
             }
         }
         if (-not $basePy) {
             foreach ($name in @("python", "python3")) {
                 $cmd = Get-Command $name -ErrorAction SilentlyContinue
                 if ($cmd) {
-                    & $cmd.Source -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>$null
-                    if ($LASTEXITCODE -eq 0) { $basePy = @($cmd.Source); break }
+                    if (Invoke-Quiet $cmd.Source @("-c", "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)")) { $basePy = @($cmd.Source); break }
                 }
             }
         }

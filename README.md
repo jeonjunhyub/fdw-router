@@ -30,7 +30,7 @@ bash deploy/run_local.sh
 수동 실행:
 
 ```bash
-pip install -r requirements.txt PyYAML numpy
+pip install -r requirements.txt -r requirements-dev.txt   # 시연 영상·MQTT 왕복까지 (영상은 ffmpeg 필요)
 pytest -q                                                    # 1,721 passed
 python -m fdw_router.integrations.fdwops --mode discrete     # fdw-ops(Isaac Sim 가상 작업장) 위에서 라우터가 배정
 python tools/mqtt_smoke.py --embedded                        # MQTT 브로커 왕복 (amqtt 내장)

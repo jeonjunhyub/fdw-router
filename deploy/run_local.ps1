@@ -106,9 +106,9 @@ if (-not (Test-Path -LiteralPath $venv)) {
 
 Write-Host "== 의존성 설치"
 if ($uv) {
-    & $uv pip install --python $py -q -r requirements.txt PyYAML numpy paho-mqtt
+    & $uv pip install --python $py -q -r requirements.txt -r requirements-dev.txt paho-mqtt
 } else {
-    & $py -m pip install -q --disable-pip-version-check -r requirements.txt PyYAML numpy paho-mqtt
+    & $py -m pip install -q --disable-pip-version-check -r requirements.txt -r requirements-dev.txt paho-mqtt
 }
 if ($LASTEXITCODE -ne 0) { throw "의존성 설치 실패" }
 

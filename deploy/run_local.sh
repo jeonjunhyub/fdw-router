@@ -51,9 +51,9 @@ if [ ! -d "$VENV" ]; then
   fi
 fi
 if command -v uv >/dev/null 2>&1; then
-  uv pip install --python "$PY" -q -r requirements.txt PyYAML numpy paho-mqtt
+  uv pip install --python "$PY" -q -r requirements.txt -r requirements-dev.txt paho-mqtt
 else
-  "$PY" -m pip install -q --disable-pip-version-check -r requirements.txt PyYAML numpy paho-mqtt
+  "$PY" -m pip install -q --disable-pip-version-check -r requirements.txt -r requirements-dev.txt paho-mqtt
 fi
 
 echo; echo "== Python        = $("$PY" -c 'import sys; print(sys.version.split()[0])') ($PY)"

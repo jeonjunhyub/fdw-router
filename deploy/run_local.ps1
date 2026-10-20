@@ -57,9 +57,9 @@ $py = Join-Path $venv "Scripts\python.exe"
 # 네이티브 명령을 조용히 실행하고 성공 여부만 돌려준다. ($ErrorActionPreference = "Stop" 아래에서는
 # 네이티브 명령이 stderr 에 한 줄만 써도 예외가 되어 Python 탐색이 중단되므로, 잠시 Continue 로 내린다.)
 function Invoke-Quiet {
-    param([string]$Exe, [string[]]$Args)
+    param([string]$Exe, [string[]]$ArgList)
     $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
-    try { & $Exe @Args 2>$null | Out-Null; return ($LASTEXITCODE -eq 0) }
+    try { & $Exe @ArgList 2>$null | Out-Null; return ($LASTEXITCODE -eq 0) }
     catch { return $false }
     finally { $ErrorActionPreference = $old }
 }
